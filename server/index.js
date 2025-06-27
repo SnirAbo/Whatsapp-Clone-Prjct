@@ -3,7 +3,10 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 const connectDB = require('./configs/db');
-const usersRouter = require('./controllers/personsController');
+const usersRouter = require('./controllers/userController');
+const messageRouter = require('./controllers/messageController');
+const groupRouter = require('./controllers/groupController');
+const authRouter = require('./controllers/authController');
 
 const app = express();
 const server = http.createServer(app); // יצירת שרת HTTP
@@ -22,7 +25,11 @@ connectDB();
 // אמצעי עזר
 app.use(cors());
 app.use('/', express.json());
-app.use('/users', usersRouter);
+app.use('/users', usersRouter); // V
+app.use('/message', messageRouter);
+app.use('/groups', groupRouter);
+app.use('/auth', authRouter);
+
 
 // חיבור socket.io
 io.on('connection', (socket) => {

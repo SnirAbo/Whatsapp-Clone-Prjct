@@ -10,6 +10,36 @@ const getById = (id) => {
   return User.findById(id);
 };
 
+const findByUsername = (username) => {
+  return User.findOne({ username });
+};
+
+const blockUser = (targetedId , userId) => {
+  const blockedUser = User.findByIdAndUpdate(userId, { $addToSet: {blockedUsers : targetedId}} , { new: true });
+  return blockedUser ;
+};
+
+
+const addToGroup = (groupId , userId) => {
+  const group = User.findByIdAndUpdate(userId, { $addToSet: {groups : groupId}} , { new: true });
+  return group ;
+};
+
+const unBlockUser = (targetedId , userId) => {
+  const unblockedUser = User.findByIdAndUpdate(userId, { $pull: {blockedUsers : targetedId}} , { new: true });
+  return unblockedUser ;
+};
+
+
+const removeFromGroup = (groupId , userId) => {
+  const group = User.findByIdAndUpdate(userId, { $pull: {groups : groupId}} , { new: true });
+  return group ;
+};
+
+const getGroupsOfUser = (userId) => {
+  return User.findById(userId).populate('groups');
+};
+
 // Create
 const addUser = (obj) => {
   const user = new User(obj);
@@ -27,9 +57,15 @@ const deleteUser = (id) => {
 };
 
 module.exports = {
-  getAllUsers,
-  getById,
-  addUser,
-  updateUser,
-  deleteUser,
+    getAllUsers,
+    getById,
+    findByUsername,
+    addUser,
+    updateUser,
+    deleteUser,
+    blockUser,
+    unBlockUser,
+    addToGroup,
+    removeFromGroup,
+    getGroupsOfUser,
 };
