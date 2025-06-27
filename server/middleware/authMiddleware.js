@@ -1,28 +1,22 @@
-const express = require('express');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const router = express.Router();
+const SECRET_KEY = process.env.JWT_SECRET;
 
-
-router.get('/', (req, res) => {
-  const token = req.headers['x-access-token'];
+const authMiddleware = (req, res, next) => {
+  const token = req.headers['authorization'];
 
   if (!token) {
-    res.status(401).json('No token provided');
+    return res.status(401).json({ message: 'No token provided' });
   }
 
-  const SECRET_KEY = 'msngrclone';
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded; // שומר את ה־id של המשתמש
+    next();
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
-  jwt.verify(token, SECRET_KEY, (err, data) => {
-    if (err) {
-      res.status(500).json('Failed to authenticate token');
-    }
-
-    console.log(data);
-
-    const products = [{ name: 'Car' }, { name: 'Phone' }];
-    res.json(products);
-  });
-});
-
-module.exports = router;
+module.exports = authMiddleware;

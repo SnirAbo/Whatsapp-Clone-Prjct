@@ -1,12 +1,12 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Auth = require('../services/authService'); // מודל המשתמש שלך
+const Auth = require('../services/authService'); 
 require('dotenv').config();
 
 const router = express.Router();
-const SECRET_KEY = msngrclone;
-// const SECRET_KEY = process.env.JWT_SECRET;
+
+const SECRET_KEY = process.env.JWT_SECRET;
 
 // POST /auth/login
 router.post('/login', async (req, res) => {

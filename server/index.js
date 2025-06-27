@@ -7,6 +7,7 @@ const usersRouter = require('./controllers/userController');
 const messageRouter = require('./controllers/messageController');
 const groupRouter = require('./controllers/groupController');
 const authRouter = require('./controllers/authController');
+const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
 const server = http.createServer(app); // יצירת שרת HTTP
@@ -25,10 +26,10 @@ connectDB();
 // אמצעי עזר
 app.use(cors());
 app.use('/', express.json());
-app.use('/users', usersRouter); // V
-app.use('/message', messageRouter);
-app.use('/groups', groupRouter);
-app.use('/auth', authRouter);
+app.use('/users', authMiddleware ,usersRouter); // V
+app.use('/message', authMiddleware ,messageRouter); // V 
+app.use('/groups', authMiddleware , groupRouter); // V
+app.use('/auth', authRouter); // V
 
 
 // חיבור socket.io
