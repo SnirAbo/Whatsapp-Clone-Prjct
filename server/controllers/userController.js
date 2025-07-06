@@ -17,16 +17,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a user By ID
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await userService.getById(id);
-    res.json(user);
-  } catch (error) {
-    res.json(error);
-  }
-});
 
 // Add a new user
 router.post('/', async (req, res) => {
@@ -39,17 +29,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update a user
-router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const obj = req.body;
-    const result = await userService.updateUser(id, obj);
-    res.json(result);
-  } catch (error) {
-    res.json(error);
-  }
-});
 
 // Block user
 router.put('/block', async (req, res) => {
@@ -106,6 +85,28 @@ router.get('/:id/groups', async (req, res) => {
   }
 });
 
+// Get a user By ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.getById(id);
+    res.json(user);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+// Update a user
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const obj = req.body;
+    const result = await userService.updateUser(id, obj);
+    res.json(result);
+  } catch (error) {
+    res.json(error);
+  }
+});
 
 // Delete a user
 router.delete('/:id', async (req, res) => {

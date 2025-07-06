@@ -21,13 +21,13 @@ const unBlockUser = (targetedId, userId) => {
   return userRepo.unBlockUser(targetedId, userId);
 };
 
-const addToGroup = (groupId, userId) => {
-  groupRepo.addUserToGroup(groupId, userId);
+const addToGroup = async (groupId, userId) => {
+  await groupRepo.addUserToGroup(groupId, userId);
   return userRepo.addToGroup(groupId, userId);
 };
 
-const removeFromGroup = (groupId, userId) => {
-  groupRepo.removeUserFromGroup(groupId,userId);
+const removeFromGroup = async (groupId, userId) => {
+  await groupRepo.removeUserFromGroup(groupId,userId);
   return userRepo.removeFromGroup(groupId, userId);
 };
 

@@ -16,7 +16,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Get a user By ID
+
 router.get('/chat', async (req, res) => {
   try {
     const { userA, userB } = req.query;

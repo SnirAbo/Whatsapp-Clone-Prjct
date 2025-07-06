@@ -41,6 +41,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const obj = req.body;
+    obj.password = await bcrypt.hash(obj.password, 10);
     const result = await Auth.register(obj);
     res.status(201).json(result);
   } catch (error) {
