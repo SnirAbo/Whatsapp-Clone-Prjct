@@ -8,12 +8,13 @@ const messageRouter = require('./controllers/messageController');
 const groupRouter = require('./controllers/groupController');
 const authRouter = require('./controllers/authController');
 const authMiddleware = require('./middleware/authMiddleware');
+const axios = require('axios');
 
 const app = express();
-const server = http.createServer(app); // יצירת שרת HTTP
+const server = http.createServer(app); 
 const io = new Server(server, {
   cors: {
-    origin: '*', // אפשר להתאים לפי הצורך
+    origin: '*', 
     methods: ['GET', 'POST', 'PUT']
   }
 });
@@ -24,7 +25,11 @@ const PORT = 3000;
 connectDB();
 
 // אמצעי עזר
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT'],
+allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token'],
+}));
 app.use('/', express.json());
 app.use('/users', authMiddleware ,usersRouter); // V
 app.use('/messages', authMiddleware ,messageRouter); // V 
@@ -39,6 +44,24 @@ app.get('/', (req, res) => {
 // חיבור socket.io
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
+
+  socket.on('join', (id) => {
+    socket.join(id); 
+  });
+
+  socket.on('sendMessage', (message) => {
+    // שומר ל-DB
+    axios.post('http://localhost:3000/messages', message)
+      .then(response => {
+        console.log('Message saved:', response.data);
+      })
+      .catch(error => {
+        console.error('Error saving message:', error);
+      });
+
+    const target = message.isGroupMessage ? message.receiverGroup : message.receiverUser;
+    socket.to(target).emit('receiveMessage', message);
+  });
 
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);

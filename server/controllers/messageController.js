@@ -3,18 +3,9 @@ const messageService = require('../services/messageService');
 
 const router = express.Router();
 
-// Entry point: http://localhost:3000/users
+// Entry point: http://localhost:3000/messages
 
 // Get All 
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const messages = await messageService.getLastConversations(id);
-    res.json(messages);
-  } catch (error) {
-    res.json(error);
-  }
-});
 
 
 router.get('/chat', async (req, res) => {
@@ -72,5 +63,16 @@ router.delete('/:id', async (req, res) => {
     res.json(error);
   }
 });
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const messages = await messageService.getLastConversations(id);
+    res.json(messages);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 
 module.exports = router;

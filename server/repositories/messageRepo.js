@@ -9,21 +9,21 @@ const addMessage = (obj) => {
 
 const getMessagesBetweenUsers = (userA, userB) => {
  return Message.find({$or: [
-  {receiver: userA, sender: userB},
-  {receiver: userB, sender: userA}
+  {receiverUser: userA, sender: userB},
+  {receiverUser: userB, sender: userA}
  ]}).sort({ timestamp: 1 });
  
 };
 
 const getMessagesFromGroup = (groupId) => {
- return Message.find({ receiver: groupId, isGroupMessage: true }).sort({ timestamp: 1 });
+ return Message.find({ receiverGroup: groupId, isGroupMessage: true }).sort({ timestamp: 1 });
 };
 
 const getLastConversations = (userId) => {
  return Message.find({
   $or: [
     { sender: userId },
-    { receiver: userId }
+    { receiverUser: userId }
   ]}).sort({ timestamp: 1 });
 };
 

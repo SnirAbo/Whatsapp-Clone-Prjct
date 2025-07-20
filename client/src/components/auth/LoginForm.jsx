@@ -16,15 +16,20 @@ const LoginFormComp = () => {
     const handleChange = (e) => {
         setloginData((prevFormData) => ({
           ...prevFormData,
-          [e.target.name]: e.target.value,  // Dynamically update the corresponding field in formData
+          [e.target.name]: e.target.value,  
         }));
       };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const {data} =await axios.post(LOGIN_URL, loginData)
+        const { data } = await axios.post(LOGIN_URL, loginData)
         sessionStorage.setItem('token', data.token );
-        navigate('/main');
+        if(sessionStorage.getItem('token')){
+          navigate('/chat');
+          alert(`Welcome back ${loginData.username}!`);
+        }else{
+          alert(`Invalid name or password!`);
+        }
     }
     
     
@@ -33,16 +38,16 @@ return (
     <>
     <Container maxWidth="sm"   sx={{ 
         backgroundColor: 'rgba(205, 205, 205, 0.5)', 
-        border: '2px solid rgba(0, 0, 0, 0.1)', // Transparent border with rgba
-        borderRadius: '8px', // Optional, gives rounded corners
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Optional, adds shadow for better visibility
+        border: '2px solid rgba(0, 0, 0, 0.1)', 
+        borderRadius: '8px', 
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', 
         padding: '24px'
       }}>
   <Box sx={{ mt: 4 }}>
   <Grid container justifyContent="center">
       <Grid item>
         <Typography variant="h4" component="h1" gutterBottom align="center">
-          Next Gen E-Commerence
+          Login to chat
         </Typography>
       </Grid>
     </Grid>
