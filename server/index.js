@@ -49,9 +49,13 @@ io.on('connection', (socket) => {
     socket.join(id); 
   });
 
-  socket.on('sendMessage', (message) => {
+  socket.on('sendMessage', (message , token) => {
     // שומר ל-DB
-    axios.post('http://localhost:3000/messages', message)
+    axios.post('http://localhost:3000/messages', message , {
+          headers: {
+            'x-access-token': token,
+          },
+        })
       .then(response => {
         console.log('Message saved:', response.data);
       })
@@ -60,7 +64,7 @@ io.on('connection', (socket) => {
       });
 
     const target = message.isGroupMessage ? message.receiverGroup : message.receiverUser;
-    socket.to(target).emit('receiveMessage', message);
+    io.to(message.sender).to(target).emit('receiveMessage', message);
   });
 
   socket.on('disconnect', () => {

@@ -3,8 +3,6 @@ import { useParams } from 'react-router-dom';
 
 const ChatHeaderComp = () => {
 const { userId } = useParams();
-const params = useParams();
-console.log(params);
 return (
     <>
     <Paper sx={{ p: 2 , width: '235%' }}>

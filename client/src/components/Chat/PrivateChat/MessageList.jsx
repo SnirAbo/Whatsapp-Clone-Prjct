@@ -3,7 +3,7 @@ import { Typography, Paper, Box } from '@mui/material';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useParams } from 'react-router-dom';
-import socket from '../../utils/socket'; // << חשוב
+import socket from '../../../utils/socket'; // << חשוב
 
 const MessageListComp = () => {
   const token = sessionStorage.getItem('token');
@@ -36,20 +36,20 @@ const MessageListComp = () => {
     };
 
     fetchPrivateMessages();
-  }, [userId, decoded.id, token]);
+  }, [userId]);
 
   useEffect(() => {
-    socket.emit('join', decoded.id);
+    socket.emit('join', userId);
 
     socket.on('receiveMessage', (newMessage) => {
       if (
-        newMessage.sender === userId ||
-        newMessage.receiverUser === userId
+        (newMessage.sender === decoded.id && newMessage.receiverUser === userId) ||
+        (newMessage.sender === userId && newMessage.receiverUser === decoded.id)
       ) {
         setMessages((prev) => [...prev, newMessage]);
       }
     });
-
+    
     return () => {
       socket.off('receiveMessage');
     };
