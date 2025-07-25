@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
     }
 
     // 3. צור JWT עם ID של המשתמש
-    const token = jwt.sign({ id: user._id, displayName: user.displayName }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, displayName: user.displayName }, SECRET_KEY, { expiresIn: '24h' });
 
     res.json({ token });
   } catch (err) {

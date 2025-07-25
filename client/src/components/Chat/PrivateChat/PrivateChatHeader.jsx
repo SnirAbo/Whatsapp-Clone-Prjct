@@ -5,7 +5,7 @@ const ChatHeaderComp = () => {
 const { userId } = useParams();
 return (
     <>
-    <Paper sx={{ p: 2 , width: '235%' }}>
+    <Paper sx={{ p: 2 , width: '100%' }}>
        <Typography variant="h6">Chat with {userId}</Typography>
     </Paper>
     </>

@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Paper, Box } from '@mui/material';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { useParams } from 'react-router-dom';
 import socket from '../../../utils/socket'; // << חשוב
 
-const MessageListComp = () => {
+const GroupMessageListComp = () => {
   const token = sessionStorage.getItem('token');
-  const decoded = jwtDecode(token);
   const [messages, setMessages] = useState([]);
-  const { userId } = useParams();
-
+  const { groupId } = useParams();
+  
   useEffect(() => {
-    const fetchPrivateMessages = async () => {
+    const fetchGroupMessages = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/messages/chat', {
+        const response = await axios.get('http://localhost:3000/messages/group', {
           params: {
-            userA: decoded.id,
-            userB: userId,
+            groupId: groupId,
           },
           headers: {
             'x-access-token': token,
@@ -35,16 +32,15 @@ const MessageListComp = () => {
       }
     };
 
-    fetchPrivateMessages();
-  }, [userId]);
+    fetchGroupMessages();
+  }, [groupId, token]);
 
   useEffect(() => {
-    socket.emit('join', userId);
+    socket.emit('join', groupId);
 
     socket.on('receiveMessage', (newMessage) => {
       if (
-        (newMessage.sender === decoded.id && newMessage.receiverUser === userId) ||
-        (newMessage.sender === userId && newMessage.receiverUser === decoded.id)
+        (newMessage.receiverGroup === groupId && newMessage.isGroupMessage) 
       ) {
         setMessages((prev) => [...prev, newMessage]);
       }
@@ -53,14 +49,14 @@ const MessageListComp = () => {
     return () => {
       socket.off('receiveMessage');
     };
-  }, [userId, decoded.id]);
+  }, [groupId]);
 
-  const ShowPrivateMessages = () => {
+  const ShowGroupMessages = () => {
     if (messages.length === 0) {
       return <Typography>No messages yet.</Typography>;
     }
-    return messages.map((msg, idx) => (
-      <Paper key={idx} sx={{ p: 2, mb: 1 }}>
+    return messages.map((msg, index) => (
+      <Paper key={index} sx={{ p: 2, mb: 1 }}>
         <Typography>{msg.content}</Typography>
       </Paper>
     ));
@@ -69,9 +65,9 @@ const MessageListComp = () => {
   return (
     <Box sx={{ p: 2, backgroundColor: '#f5f5f5', borderRadius: 1, maxWidth: '800px', margin: 'auto' }}>
       <Typography variant="h6" gutterBottom>Messages</Typography>
-      <ShowPrivateMessages />
+      <ShowGroupMessages />
     </Box>
   );
 };
 
-export default MessageListComp;
+export default GroupMessageListComp;

@@ -2,8 +2,12 @@
 import { Route, Routes, Link} from 'react-router-dom'
 import RegisterFormComp from "./components/auth/RegisterForm"
 import LoginFormComp from "./components/auth/LoginForm"
-import ChatPageComp from './components/Chat/ChatPage'
-import MessageListComp from './components/Chat/PrivateChat/MessageList'
+
+import PrivateChatPageComp from './components/Chat/PrivateChat/PrivateChatPage'
+
+import GroupChatPageComp from './components/Chat/GroupChat/GroupChatPage' 
+
+import MainChatPageComp from './components/Chat/MainChatPage'
 
 
 
@@ -14,9 +18,10 @@ function App() {
          <Routes>
       <Route path='/' element={<LoginFormComp />} />
       <Route path='/register' element={<RegisterFormComp />} />
-      <Route path='/chat' element={<ChatPageComp/>}>
-        <Route path=':userId' element={<MessageListComp />} />
-        <Route path=':groupId' element={<MessageListComp />} />
+
+      <Route path='/chat' element={<MainChatPageComp/>}>
+        <Route path='user/:userId' element={<PrivateChatPageComp />} />
+        <Route path='group/:groupId' element={<GroupChatPageComp />} />
       </Route>
 
     </Routes>

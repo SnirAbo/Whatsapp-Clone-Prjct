@@ -50,8 +50,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sendMessage', (message , token) => {
-    // שומר ל-DB
-    axios.post('http://localhost:3000/messages', message , {
+    if(!message.isGroupMessage){
+    axios.post('http://localhost:3000/messages/chat', message , {
           headers: {
             'x-access-token': token,
           },
@@ -62,6 +62,19 @@ io.on('connection', (socket) => {
       .catch(error => {
         console.error('Error saving message:', error);
       });
+      }else{
+        axios.post('http://localhost:3000/messages/group', message , {
+          headers: {
+            'x-access-token': token,
+          },
+        })
+      .then(response => {
+        console.log('Message saved:', response.data);
+      })
+      .catch(error => {
+        console.error('Error saving message:', error);
+      });
+      }
 
     const target = message.isGroupMessage ? message.receiverGroup : message.receiverUser;
     io.to(message.sender).to(target).emit('receiveMessage', message);

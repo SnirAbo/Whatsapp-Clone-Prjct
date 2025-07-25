@@ -23,7 +23,7 @@ const UserListComp = () => {
 
       const handleClick = (userId) => {
         return () => {
-            navigate(`/chat/${userId}`);
+            navigate(`/chat/user/${userId}`);
         }
       }
       

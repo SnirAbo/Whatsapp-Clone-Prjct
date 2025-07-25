@@ -5,36 +5,36 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const UserListComp = () => {
-    const [users, setUsers] = useState([]);
+const GroupListComp = () => {
+    const [groups, setGroups] = useState([]);
     const token = sessionStorage.getItem('token');
     const navigate = useNavigate();
     useEffect(() => {
     const fetchUsers = async () => {
-        const response = await axios.get('http://localhost:3000/users', {
+        const response = await axios.get('http://localhost:3000/groups', {
             headers: { 
                 'x-access-token': token
             }
         });
-        setUsers(response.data);
+        setGroups(response.data);
     }
     fetchUsers();
       }, [token]);
 
-      const handleClick = (userId) => {
+      const handleClick = (groupId) => {
         return () => {
-            navigate(`/chat/${userId}`);
+            navigate(`/chat/group/${groupId}`);
         }
       }
       
 return (
     <>
 <Box sx={{ p: 2 }}>
-    {users.map((user, index) => (
+    {groups.map((group, index) => (
         <Card key={index} sx={{ p: 1, mb: 1, transition: 'background-color 0.3s ease', '&:hover': { backgroundColor: '#f0f0f0' } }}>
-            <CardActionArea onClick={handleClick(user._id)}>
+            <CardActionArea onClick={handleClick(group._id)}>
                         <CardContent>
-            <Typography>{user.displayName}</Typography>
+            <Typography>{group.name}</Typography>
             </CardContent>
             </CardActionArea>
         </Card>
@@ -44,4 +44,4 @@ return (
  );
 }
 
-export default UserListComp;
+export default GroupListComp;
