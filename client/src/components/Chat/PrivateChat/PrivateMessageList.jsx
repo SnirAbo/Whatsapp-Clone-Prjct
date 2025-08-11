@@ -10,6 +10,22 @@ const PMessageListComp = () => {
   const decoded = jwtDecode(token);
   const [messages, setMessages] = useState([]);
   const { userId } = useParams();
+  const [users, setUsers] = useState([]);
+  const currentUser = users.find(user => user._id === decoded.id);
+  const targetedUser = users.find(user => user._id === userId);
+
+      useEffect(() => {
+    const fetchUsers = async () => {
+        const response = await axios.get('http://localhost:3000/users', {
+            headers: { 
+                'x-access-token': token
+            }
+        });
+        setUsers(response.data);
+    }
+    fetchUsers();
+      }, [token]);
+
 
   useEffect(() => {
     const fetchPrivateMessages = async () => {
@@ -39,7 +55,7 @@ const PMessageListComp = () => {
   }, [userId]);
 
   useEffect(() => {
-    socket.emit('join', userId);
+    socket.emit('join', decoded.id);
 
     socket.on('receiveMessage', (newMessage) => {
       if (
@@ -59,11 +75,32 @@ const PMessageListComp = () => {
     if (messages.length === 0) {
       return <Typography>No messages yet.</Typography>;
     }
-    return messages.map((msg, idx) => (
-      <Paper key={idx} sx={{ p: 2, mb: 1 }}>
+    if(targetedUser.blockedUsers?.includes(currentUser._id) ||
+    currentUser.blockedUsers?.includes(targetedUser._id)) {
+      return <Typography>You have blocked this user.</Typography>;
+    }
+  return messages.map((msg, idx) => {
+  const isMine = msg.sender._id === decoded.id;
+  return (
+
+    <Box key={idx} sx={{ display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
+      <Paper
+
+        sx={{
+          p: 1,
+          mb: 1,
+          maxWidth: '60%',
+          backgroundColor: isMine ? '#dcf8c6' : '#ffffff',
+        }}
+      >
+        <Typography>
+          {msg.sender.displayName}:
+        </Typography>
         <Typography>{msg.content}</Typography>
       </Paper>
-    ));
+    </Box>
+  );
+});
   };
 
   return (

@@ -11,12 +11,19 @@ const getMessagesBetweenUsers = (userA, userB) => {
  return Message.find({$or: [
   {receiverUser: userA, sender: userB},
   {receiverUser: userB, sender: userA}
- ]}).sort({ timestamp: 1 });
- 
+ ]}).populate(
+  'sender', 'displayName _id'
+  ).populate(
+  'receiverUser', 'displayName _id'
+  ).sort({ timestamp: 1 });
 };
 
 const getMessagesFromGroup = (groupId) => {
- return Message.find({ receiverGroup: groupId, isGroupMessage: true }).sort({ timestamp: 1 });
+ return Message.find({ receiverGroup: groupId, isGroupMessage: true }).populate(
+  'sender', 'displayName _id'
+  ).populate(
+  'receiverGroup', 'name _id'
+  ).sort({ timestamp: 1 });
 };
 
 const getLastConversations = (userId) => {

@@ -47,38 +47,75 @@ io.on('connection', (socket) => {
 
   socket.on('join', (id) => {
     socket.join(id); 
+    socket.join(socket.id)
   });
 
-  socket.on('sendMessage', (message , token) => {
-    if(!message.isGroupMessage){
-    axios.post('http://localhost:3000/messages/chat', message , {
-          headers: {
-            'x-access-token': token,
-          },
-        })
-      .then(response => {
-        console.log('Message saved:', response.data);
-      })
-      .catch(error => {
-        console.error('Error saving message:', error);
-      });
-      }else{
-        axios.post('http://localhost:3000/messages/group', message , {
-          headers: {
-            'x-access-token': token,
-          },
-        })
-      .then(response => {
-        console.log('Message saved:', response.data);
-      })
-      .catch(error => {
-        console.error('Error saving message:', error);
-      });
+  socket.on('sendMessage', (message, token) => {
+  axios.post('http://localhost:3000/messages', message, {
+    headers: {
+      'x-access-token': token,
+    },
+  })
+  .then((response) => {
+    console.log('Message saved:', response.data);
+
+    const targetRoom = message.isGroupMessage
+      ? message.receiverGroup
+      : message.receiverUser;
+      
+    io.to(message.sender).to(targetRoom).emit('receiveMessage', message);
+  })
+  .catch((error) => {
+    console.error('Error saving message:', error);
+  });
+});
+
+  socket.on('blockUser', (targetedId, userId, token) => {
+    axios.put('http://localhost:3000/users/block', {
+      targetedId,
+      userId
+    }, {
+      headers: { 
+        'x-access-token': token
       }
-
-    const target = message.isGroupMessage ? message.receiverGroup : message.receiverUser;
-    io.to(message.sender).to(target).emit('receiveMessage', message);
+    })
+    .then(response => {
+      console.log('User blocked:', response.data);
+    })
+    .catch(error => {
+      console.error('Error blocking user:', error);
+    });
   });
+
+  socket.on('unblockUser', (targetedId, userId, token) => {
+    axios.put('http://localhost:3000/users/unblock', {
+      targetedId,
+      userId
+    }, {
+      headers: { 
+        'x-access-token': token
+      }
+    })
+    .then(response => {
+      console.log('User unblocked:', response.data);
+    })
+    .catch(error => {
+      console.error('Error unblocking user:', error);
+    });
+  });
+
+    // Listen for userJoinedGroup event
+  socket.on('userJoinedGroup', (data) => {
+    console.log(`User ${data.userId} joined group ${data.groupId}`);
+    io.emit('userJoinedGroup', data); // Broadcast to all connected clients
+  });
+
+  // Listen for userLeftGroup event
+  socket.on('userLeftGroup', (data) => {
+    console.log(`User ${data.userId} left group ${data.groupId}`);
+    io.emit('userLeftGroup', data); // Broadcast to all connected clients
+  });
+
 
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);

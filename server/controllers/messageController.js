@@ -7,7 +7,6 @@ const router = express.Router();
 
 // Get All 
 
-
 router.get('/chat', async (req, res) => {
   try {
     const { userA, userB } = req.query;
@@ -27,7 +26,6 @@ router.get('/group', async (req, res) => {
     res.status(500).json(error.message);
   }
 });
-
 
 
 // Add a new message
