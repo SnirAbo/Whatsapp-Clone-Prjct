@@ -105,15 +105,55 @@ io.on('connection', (socket) => {
   });
 
     // Listen for userJoinedGroup event
-  socket.on('userJoinedGroup', (data) => {
-    console.log(`User ${data.userId} joined group ${data.groupId}`);
-    io.emit('userJoinedGroup', data); // Broadcast to all connected clients
+  socket.on('userJoinedGroup', (targetedId, userId, token) => {
+    axios.put('http://localhost:3000/users/join-group', {
+      targetedId,
+      userId
+    }, {
+      headers: { 
+        'x-access-token': token
+      }
+    })
+    .then(response => {
+      console.log(`User ${userId} joined group ${targetedId}`);
+    })
+    .catch(error => {
+      console.error('Error blocking user:', error);
+    });
   });
 
   // Listen for userLeftGroup event
-  socket.on('userLeftGroup', (data) => {
-    console.log(`User ${data.userId} left group ${data.groupId}`);
-    io.emit('userLeftGroup', data); // Broadcast to all connected clients
+  socket.on('userLeftGroup', (targetedId, userId, token) => {
+    axios.put('http://localhost:3000/users/leave-group', {
+      targetedId,
+      userId
+    }, {
+      headers: { 
+        'x-access-token': token
+      }
+    })
+    .then(response => {
+      console.log(`User ${userId} left group ${targetedId}`);
+    })
+    .catch(error => {
+      console.error('Error blocking user:', error);
+    });
+  });
+
+   socket.on('createGroup', (name, token) => {
+    axios.post('http://localhost:3000/groups', {
+      name,
+    }, {
+      headers: { 
+        'x-access-token': token
+      }
+    })
+    .then(response => {
+      console.log(`User ${userId} created group ${name}`);
+    })
+    .catch(error => {
+      console.error('Error blocking user:', error);
+    });
   });
 
 
