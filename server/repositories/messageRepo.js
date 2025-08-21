@@ -31,7 +31,9 @@ const getLastConversations = (userId) => {
   $or: [
     { sender: userId },
     { receiverUser: userId }
-  ]}).sort({ timestamp: 1 });
+  ]}).sort({ timestamp: 1 }).limit(20)
+  .populate('sender', 'displayName _id')
+  .populate('receiverUser', 'displayName _id');
 };
 
 // Update
